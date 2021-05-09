@@ -6,4 +6,4 @@ RUN echo "[npm] installing.." && \
     npm install
 
 COPY . .
-ENTRYPOINT [ "nodemon", "-L", "index.js" ]
+ENTRYPOINT [ "nodemon", "-L", "src/index.js" ]
