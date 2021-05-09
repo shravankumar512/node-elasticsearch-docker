@@ -6,6 +6,7 @@ services:
         depends_on: 
             - elasticsearch
             - kibana
+            - mongodb
         environment:
             - ES_HOST=elasticsearch
             - ES_PORT=9200
@@ -16,6 +17,7 @@ services:
             - NODE_ENV=development
             - ET_PORT=5432
         links: 
+            - mongodb
             - elasticsearch
             - kibana
         container_name: node-elastic
@@ -26,6 +28,18 @@ services:
         volumes:
             - ./:/code
             - /code/node_modules
+
+    mongodb:
+        image: mongo
+        environment:
+            - MONGO_INITDB_DATABASE=mydatabase
+        # restart: always
+        container_name: mongodb
+        volumes:
+            - data-node:/data/db
+        ports:
+            - 27017:27017
+        network_mode: bridge
 
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
@@ -61,3 +75,6 @@ services:
             - 5601:5601
         expose:
             - 5601
+
+volumes:
+    data-node:
