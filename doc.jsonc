@@ -1,7 +1,7 @@
 // create index (body is optional)
 {
     "operation": "create-index",
-    "index": "underwritten",
+    "index": "mytest",
     "body": {
         "settings": {
             "index.mapping.total_fields.limit": 4000,
@@ -10,19 +10,19 @@
         },
         "mappings": {
             "properties": {
-                "insurance": {
+                "x": {
                     "type": "long"
                 },
-                "loannumber": {
+                "y": {
                     "type": "long"
                 },
-                "mfee": {
+                "z": {
                     "type": "long"
                 },
-                "reserves": {
+                "p": {
                     "type": "long"
                 },
-                "tax": {
+                "q": {
                     "type": "long"
                 }
             }
@@ -34,12 +34,12 @@
 // get-mapping | get-settings | put-mapping | put-settings
 {
     "operation": "get-mapping",
-    "index": "underwritten"
+    "index": "mytest"
 }
 // put-settings
 {
     "operation": "put-settings",
-    "index": "underwritten",
+    "index": "mytest",
     "body": {
         "index": {
             "number_of_replicas": 1
@@ -50,29 +50,29 @@
 // insert or update entire record
 {
     "operation": "insert",
-    "index": "underwritten",
+    "index": "mytest",
     "id": 123456,
     "body": {
-        "loannumber": 123456,
-        "tax": 2000,
-        "insurance": 3000,
-        "mfee": 3,
-        "reserves": 9000
+        "y": 123456,
+        "q": 2000,
+        "x": 3000,
+        "z": 3,
+        "p": 9000
     }
 }
 
 // update
 {
     "operation": "update",
-    "index": "underwritten",
+    "index": "mytest",
     "id": 123456,
     "body": {
         "doc": {
-            "loannumber": 123456,
-            "tax": 200,
-            "insurance": 300,
-            "mfee": 3,
-            "reserves": 900
+            "y": 123456,
+            "q": 200,
+            "x": 300,
+            "z": 3,
+            "p": 900
         }
     }
 }
@@ -80,14 +80,14 @@
 // delete
 {
     "operation": "delete",
-    "index": "underwritten",
+    "index": "mytest",
     "id": 123456
 }
 
 // search index
 {
     "operation": "search",
-    "index": "underwritten",
+    "index": "mytest",
     "from": 0,
     "size": 10,
     "body": {
@@ -99,7 +99,7 @@
 
 {
     "operation": "search",
-    "index": "underwritten",
+    "index": "mytest",
     "from": 0,
     "size": 10,
     "body": {
@@ -108,7 +108,7 @@
                 "filter": [
                     {
                         "term": {
-                            "loannumber": 123456
+                            "y": 123456
                         }
                     }
                 ]
