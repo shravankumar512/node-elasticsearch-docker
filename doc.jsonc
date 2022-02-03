@@ -1,0 +1,118 @@
+// create index (body is optional)
+{
+    "operation": "create-index",
+    "index": "underwritten",
+    "body": {
+        "settings": {
+            "index.mapping.total_fields.limit": 4000,
+            "number_of_shards": 5,
+            "number_of_replicas": 1
+        },
+        "mappings": {
+            "properties": {
+                "insurance": {
+                    "type": "long"
+                },
+                "loannumber": {
+                    "type": "long"
+                },
+                "mfee": {
+                    "type": "long"
+                },
+                "reserves": {
+                    "type": "long"
+                },
+                "tax": {
+                    "type": "long"
+                }
+            }
+        }
+    }
+}
+
+// get, put  mapping/settings
+// get-mapping | get-settings | put-mapping | put-settings
+{
+    "operation": "get-mapping",
+    "index": "underwritten"
+}
+// put-settings
+{
+    "operation": "put-settings",
+    "index": "underwritten",
+    "body": {
+        "index": {
+            "number_of_replicas": 1
+        }
+    }
+}
+
+// insert or update entire record
+{
+    "operation": "insert",
+    "index": "underwritten",
+    "id": 123456,
+    "body": {
+        "loannumber": 123456,
+        "tax": 2000,
+        "insurance": 3000,
+        "mfee": 3,
+        "reserves": 9000
+    }
+}
+
+// update
+{
+    "operation": "update",
+    "index": "underwritten",
+    "id": 123456,
+    "body": {
+        "doc": {
+            "loannumber": 123456,
+            "tax": 200,
+            "insurance": 300,
+            "mfee": 3,
+            "reserves": 900
+        }
+    }
+}
+
+// delete
+{
+    "operation": "delete",
+    "index": "underwritten",
+    "id": 123456
+}
+
+// search index
+{
+    "operation": "search",
+    "index": "underwritten",
+    "from": 0,
+    "size": 10,
+    "body": {
+        "query": {
+            "match_all": {}
+        }
+    }
+}
+
+{
+    "operation": "search",
+    "index": "underwritten",
+    "from": 0,
+    "size": 10,
+    "body": {
+        "query": {
+            "bool": {
+                "filter": [
+                    {
+                        "term": {
+                            "loannumber": 123456
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

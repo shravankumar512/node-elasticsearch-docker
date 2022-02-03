@@ -1,80 +1,118 @@
 version: "3"
 
-services: 
-    app:
-        build: .
-        depends_on: 
-            - elasticsearch
-            - kibana
-            - mongodb
-        environment:
-            - ES_HOST=elasticsearch
-            - ES_PORT=9200
-            - ES_PROTO=http
-            - ET_HOST=eventide
-            - ET_USERNAME=message_store
-            - ET_PASSWORD=
-            - NODE_ENV=development
-            - ET_PORT=5432
-        links: 
-            - mongodb
-            - elasticsearch
-            - kibana
-        container_name: node-elastic
-        network_mode: bridge
-        ports:
-            - 3000:3000
-            - 5858:5858
-        volumes:
-            - ./:/code
-            - /code/node_modules
+services:
+  app:
+    build: .
+    depends_on:
+      - elasticsearch
+      - kibana
+      - mongodb
+    environment:
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+      - ES_PROTO=http
+      - ET_HOST=eventide
+      - ET_USERNAME=message_store
+      - ET_PASSWORD=
+      - NODE_ENV=development
+      - ET_PORT=5432
+    links:
+      - mongodb
+      - elasticsearch
+      - kibana
+    container_name: node-elastic
+    networks:
+      - es-net
+    ports:
+      - 3000:3000
+      - 5858:5858
+    volumes:
+      - ./:/code
+      - /code/node_modules
 
-    mongodb:
-        image: mongo
-        environment:
-            - MONGO_INITDB_DATABASE=mydatabase
-        # restart: always
-        container_name: mongodb
-        volumes:
-            - data-node:/data/db
-        ports:
-            - 27017:27017
-        network_mode: bridge
+  mongodb:
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=mydatabase
+    # restart: always
+    container_name: mongodb
+    volumes:
+      - data-node:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - es-net
 
-    elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
-        container_name: elasticsearch
-        network_mode: bridge
-        environment:
-          - cluster.name=docker-cluster
-          - bootstrap.memory_lock=true
-          - discovery.type=single-node
-          - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-        ulimits:
-          memlock:
-            soft: -1
-            hard: -1
-        ports:
-          - 9200:9200
-        expose:
-          - 9200
-
-    kibana:
-        image: docker.elastic.co/kibana/kibana:7.7.0
-        container_name: kibana
-        network_mode: bridge
-        environment:
-            SERVER_NAME: kibana
-            MONITORING_ENABLED: "true"
-            ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
-        depends_on:
-            - elasticsearch
-        links:
-            - elasticsearch
-        ports:
-            - 5601:5601
-        expose:
-            - 5601
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    container_name: elasticsearch
+    networks:
+      - es-net
+    environment:
+      - xpack.security.enabled=false
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    expose:
+      - 9200
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.7.0
+    container_name: kibana
+    networks:
+      - es-net
+    environment:
+      SERVER_NAME: kibana
+      MONITORING_ENABLED: "true"
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch
+    ports:
+      - 5601:5601
+networks:
+  es-net:
+    driver: bridge
 
 volumes:
-    data-node:
+  data-node:
+# version: "3.0"
+# services:
+#   elasticsearch:
+#     container_name: elasticsearch
+#     image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+#     environment:
+#       - xpack.security.enabled=false
+#       # - "discovery.type=single-node"
+#       - cluster.name=docker-cluster
+#       - bootstrap.memory_lock=true
+#       - discovery.type=single-node
+#       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#     networks:
+#       - es-net
+#     ports:
+#       - 9200:9200
+#   kibana:
+#     container_name: kibana
+#     image: docker.elastic.co/kibana/kibana:7.7.0
+#     environment:
+#       # ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#       SERVER_NAME: kibana
+#       MONITORING_ENABLED: "true"
+#       ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+#     networks:
+#       - es-net
+#     depends_on:
+#       - elasticsearch
+#     ports:
+#       - 5601:5601
+# networks:
+#   es-net:
+#     driver: bridge
